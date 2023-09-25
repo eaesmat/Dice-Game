@@ -10,6 +10,7 @@ const playerTwoCurrentScore = document.querySelector('#current--1');
 const playerZero = document.querySelector('.player--0');
 const playerOne = document.querySelector('.player--1');
 const btnHold = document.querySelector('.btn--hold');
+const btnNew = document.querySelector('.btn--new');
 
 // Cleared defult data of the score and dice
 player0Element.textContent = 0;
@@ -25,32 +26,74 @@ const swithcPalyer = function () {
 };
 
 // Variable to hold players score
-let playerScore = 0;
-let activePlayer = 0;
-let score = [0, 0];
+let playerScore, activePlayer, score, palying;
+
+const init = function () {
+  playerScore = 0;
+  activePlayer = 0;
+  score = [0, 0];
+  palying = true;
+
+  playerOne.classList.remove('player--active');
+  player0Element.textContent = 0;
+  player1Element.textContent = 0;
+  playerOneCurrentScore.textContent = 0;
+  playerTwoCurrentScore.textContent = 0;
+  document.querySelector('.player--0').classList.remove('player--winner');
+  document.querySelector('.player--1').classList.remove('player--winner');
+
+
+};
+
+init();
 
 // add logic to roll th dice
 rollDiceBtn.addEventListener('click', function () {
-  // Generate rondom number from 1 to 6
-  const diceNumber = Math.trunc(Math.random() * 6) + 1;
+  if (palying) {
+    // Generate rondom number from 1 to 6
+    const diceNumber = Math.trunc(Math.random() * 6) + 1;
 
-  // add dice image according to the generated number
-  dice.classList.remove('hidden');
-  dice.src = `dice-${diceNumber}.png`;
+    // add dice image according to the generated number
+    dice.classList.remove('hidden');
+    dice.src = `dice-${diceNumber}.png`;
 
-  //    add score to the player
-  if (diceNumber !== 1) {
-    playerScore += diceNumber;
-    document.querySelector(`#current--${activePlayer}`).textContent =
-      playerScore;
-  } else {
-    swithcPalyer();
+    //    add score to the player
+    if (diceNumber !== 1) {
+      playerScore += diceNumber;
+      document.querySelector(`#current--${activePlayer}`).textContent =
+        playerScore;
+    } else {
+      swithcPalyer();
+    }
+
+    if (score[activePlayer] + playerScore >= 20) {
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--winner');
+      document.querySelector(`#score--${activePlayer}`).textContent = score[
+        activePlayer
+      ] += playerScore;
+      palying = false;
+    }
   }
 });
 
 btnHold.addEventListener('click', function () {
- 
-  document.querySelector(`#score--${activePlayer}`).textContent = score[
-    activePlayer
-  ] += playerScore;
+  if (palying) {
+    document.querySelector(`#score--${activePlayer}`).textContent = score[
+      activePlayer
+    ] += playerScore;
+
+    if (score[activePlayer] >= 20) {
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--winner');
+      palying = false;
+    } else {
+      swithcPalyer();
+    }
+  }
 });
+
+btnNew.addEventListener('click', init);
+
